@@ -1,0 +1,3 @@
+C:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali/build/CMakeFiles/someApp.dir
+C:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali/build/CMakeFiles/ZERO_CHECK.dir

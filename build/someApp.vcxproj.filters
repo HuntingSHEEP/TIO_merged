@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\GraphicsEngine\GridMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\GraphicsEngine\VulkanEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\MeshFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\MeshRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\PGT\Maze.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\PGT\WystawaFractali.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\SIGK\DynamicSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\SIGK\GeneticAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\SIGK\PointMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\TIO\AntRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\TIO\BenchFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\TIO\functions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\GraphicsEngine\GetPointMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\GraphicsEngine\GridMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\GraphicsEngine\HelperStructures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\GraphicsEngine\VkDraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\GraphicsEngine\VulkanEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\MeshFilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\MeshRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\PGT\Maze.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\PGT\WystawaFractali.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\SIGK\DynamicSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\SIGK\GeneticAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\SIGK\PointMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\TIO\APIAntAlgorithm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\TIO\AntRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\TIO\BenchFunction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\TIO\Utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\TIO\functions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\include\TIO\prepareObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\aglow\OneDrive\Pulpit\TIO_FinishIT — kopia — kopia\wystawaFractali\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{7E4DD60D-1D9F-38B7-A24B-69A2FC97027C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{92F035A8-C525-3532-A5E5-182C19AF1A42}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
