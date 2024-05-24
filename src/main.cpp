@@ -26,7 +26,7 @@ int main(){
         AntRender* nestRender = new AntRender(vkEngine, 1.5, {0.5, 0.99, 0.2});
 
         //Algorytm mrowiska
-        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), std::function<double(double, double)>(himmelBlau), {-6, 6, -6, 6});
+        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), himmelBlauInfo);
 
 
         double timeToNextUpdate = 0.f;

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "TIO/Utils.hpp"
+#include "TIO/functions.h"
 
 // Class representing an ant
 class Ant
@@ -158,6 +159,9 @@ class APIAntAlgorithm
 {
 	// Public methods
 public:
+	APIAntAlgorithm(const int _antsAmount, FunctionInfo _functionInfo)
+		: APIAntAlgorithm(_antsAmount, _functionInfo.functionPointer, {_functionInfo.xMin, _functionInfo.xMax, _functionInfo.yMin, _functionInfo.yMax}){}
+
 	APIAntAlgorithm(const int _antsAmount, const std::function<double(double, double)>& _fun, const FunDomain& _funDomain)
 		: m_fun(_fun)
 		, m_funDomain(_funDomain)
