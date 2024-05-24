@@ -20,12 +20,17 @@ BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionPointer func) : tr
     this->drawInfo = {model, t, pipeline, uBuffer, dSet};
 };
 
+void BenchFunction::wrapperTransform(glm::vec3& vertex){
+    glm::vec3 p = vertex;
+    vertex.y = static_cast<float>(transformFunction(p.x, p.z));
+};
+
 
 void BenchFunction::mapBenchFunction(VulkanEngine* vkEngine, Model* model) {
     std::vector<Vertex> vertices = model->vertices;
 
     for (auto& v : vertices)
-        transformFunction(v.pos);
+        wrapperTransform(v.pos);
     
     normalize(vertices, 10.);
     colorizeByDepth(vertices);
@@ -54,7 +59,7 @@ void BenchFunction::normalize(std::vector<Vertex>& vertices, float scale){
 }
 
 glm::vec3 BenchFunction::putOnFunction(glm::vec3 position){
-    transformFunction(position);
+    wrapperTransform(position);
 
     position.y *= modifier;
     return position;
