@@ -47,7 +47,7 @@ public:
 	{
 		if (m_memory.size() < GlobalParams::ANT_MEMORY_SIZE)
 		{
-			HuntingSite newHuntingSite = { getRandomPointInCircle(*m_nest, GlobalParams::NEIGHBORHOOD_SIZE * m_aSite).clampToDomain(*m_funDomain) };
+			HuntingSite newHuntingSite = { getRandomPointInCircle(*m_nest, m_funDomain->getNeighbourhoodSize() * m_aSite).clampToDomain(*m_funDomain) };
 			exploreSite(newHuntingSite);
 			m_memory.push_back(newHuntingSite);
 			m_currentPosition = { newHuntingSite.s.x, newHuntingSite.s.y };
@@ -121,7 +121,7 @@ private:
 	{
 		double valueInS = (*m_fun)(_huntingSite.s.x, _huntingSite.s.y);
 
-		auto [x, y] = getRandomPointInCircle(_huntingSite.s, GlobalParams::NEIGHBORHOOD_SIZE * m_aLocal).clampToDomain(*m_funDomain);
+		auto [x, y] = getRandomPointInCircle(_huntingSite.s, m_funDomain->getNeighbourhoodSize() * m_aLocal).clampToDomain(*m_funDomain);
 		double valueInExploredPoint = (*m_fun)(x, y);
 
 		if (valueInExploredPoint > valueInS)

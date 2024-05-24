@@ -10,7 +10,7 @@
 namespace GlobalParams
 {
 	constexpr size_t ANT_MEMORY_SIZE = 2;
-	constexpr double NEIGHBORHOOD_SIZE = 6.0;
+	constexpr double NEIGHBOURHOOD_RATIO = 0.5;
 	constexpr int MAX_FAILED_EXPLORATIONS_PER_SITE = 6;
 	constexpr int MAX_NUMBER_OF_RECRUITMENTS = 6;
 	constexpr int MAX_NEST_RELOCATIONS = 10;
@@ -33,6 +33,11 @@ struct FunDomain
 	inline double getSizeY() const
 	{
 		return std::abs(yMax - yMin);
+	}
+
+	inline double getNeighbourhoodSize() const
+	{
+		return (std::sqrt(getSizeX() * getSizeX() + getSizeY() * getSizeY()) / 2) * GlobalParams::NEIGHBOURHOOD_RATIO;
 	}
 };
 
