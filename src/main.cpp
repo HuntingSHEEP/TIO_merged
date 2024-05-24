@@ -14,8 +14,11 @@ int main(){
         VulkanEngine* vkEngine = new VulkanEngine();
         vkEngine->setupCallbacks(vkEngine->window);
 
-        //Funkcja testowa
-        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, himmelBlauInfo);
+        //Wybór funkcji testowej
+        FunctionInfo funkcjaTestowaInfo = sixHumpCamelInfo;// himmelBlauInfo;//sixHumpCamelInfo;
+
+        //Wizualizacji funkcji testowej
+        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, funkcjaTestowaInfo, 10.);
 
         //Graficzna reprezentacja mrówek
         std::vector<AntRender*> antsToRender{};
@@ -26,7 +29,7 @@ int main(){
         AntRender* nestRender = new AntRender(vkEngine, 1.5, {0.5, 0.99, 0.2});
 
         //Algorytm mrowiska
-        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), himmelBlauInfo);
+        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), funkcjaTestowaInfo);
 
 
         double timeToNextUpdate = 0.f;

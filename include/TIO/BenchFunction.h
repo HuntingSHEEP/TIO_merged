@@ -8,7 +8,7 @@
 
 class BenchFunction : public VkDraw{
 public:
-    BenchFunction(VulkanEngine* app, FunctionInfo info);
+    BenchFunction(VulkanEngine* app, FunctionInfo info, float size);
 
     glm::vec3 putOnFunction(glm::vec3 position);
     void wrapperTransform(glm::vec3& vertex);
@@ -22,6 +22,9 @@ public:
 private:
     FunctionPointer transformFunction;
     FunctionInfo functionInfo;
+
+    glm::vec3 representationScale;
+    float graphSize;
 
     Transform transform;
     DrawModelInfo drawInfo;

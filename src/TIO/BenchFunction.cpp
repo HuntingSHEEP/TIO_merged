@@ -2,11 +2,16 @@
 #include "GraphicsEngine/GetPointMatrix.h"
 
 
-BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionInfo info) 
-: transformFunction(info.functionPointer), functionInfo(info){
+BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionInfo info, float size) 
+: transformFunction(info.functionPointer), functionInfo(info), graphSize(size){
+    float xScale = functionInfo.xMax - functionInfo.xMin;
+    float yScale = functionInfo.yMax - functionInfo.yMin;
+
+    representationScale = { 1.* (graphSize/xScale), 1., 1. * (graphSize/yScale) };
+
     Transform t{};
     t.position = { 0., 0., 0. };
-    t.scale = { 1., 1., 1. };
+    t.scale = representationScale; //{1., 1., 1.};
     t.rotationAxis = { 0., 0., 1. };
     t.rotationAngle = 0.f;
 
@@ -33,7 +38,7 @@ void BenchFunction::mapBenchFunction(VulkanEngine* vkEngine, Model* model) {
     for (auto& v : vertices)
         wrapperTransform(v.pos);
     
-    normalize(vertices, 10.);
+    normalize(vertices, graphSize);
     colorizeByDepth(vertices);
     
     vkEngine->updateModel(model, vertices);
@@ -63,6 +68,7 @@ glm::vec3 BenchFunction::putOnFunction(glm::vec3 position){
     wrapperTransform(position);
 
     position.y *= modifier;
+    position *= representationScale;
     return position;
 }
 
