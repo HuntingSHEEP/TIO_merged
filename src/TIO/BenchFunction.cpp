@@ -2,7 +2,8 @@
 #include "GraphicsEngine/GetPointMatrix.h"
 
 
-BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionPointer func) : transformFunction(func){
+BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionInfo info) 
+: transformFunction(info.functionPointer), functionInfo(info){
     Transform t{};
     t.position = { 0., 0., 0. };
     t.scale = { 1., 1., 1. };
@@ -10,7 +11,7 @@ BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionPointer func) : tr
     t.rotationAngle = 0.f;
 
     Pipeline pipeline = vkEngine->initPipeline({ "../resources/shaders/vert.spv" , "../resources/shaders/frag.spv", VK_PRIMITIVE_TOPOLOGY_POINT_LIST });
-    Model model = getPointMatrix(vkEngine, -6, 6, 100);
+    Model model = getPointMatrix(vkEngine, functionInfo.xMin, functionInfo.xMax, 100);
     Texture paper = vkEngine->initTexture({ "../resources/textures/whitePaper2.jpg" });
 
     UniformBuffer uBuffer = vkEngine->initUniformBuffer();

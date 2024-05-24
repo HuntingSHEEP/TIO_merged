@@ -15,7 +15,7 @@ int main(){
         vkEngine->setupCallbacks(vkEngine->window);
 
         //Funkcja testowa
-        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, himmelBlau);
+        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, himmelBlauInfo);
 
         //Graficzna reprezentacja mrówek
         std::vector<AntRender*> antsToRender{};

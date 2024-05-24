@@ -1,5 +1,5 @@
 #include "TIO/BenchFunction.h"
-#include "TIO/prepareObjects.h"
+
 
 
 #include "GraphicsEngine/VulkanEngine.h"
@@ -1944,7 +1944,7 @@ void VulkanEngine::updateTime(){
 
 
     void VulkanEngine::robObiekty(){
-        DrawAllOfThem models{};// = prepareObjects(this);
+        DrawAllOfThem models{};
 
         mainLoop(models);
         cleanup();

@@ -2,14 +2,13 @@
 #include "GraphicsEngine/VulkanEngine.h"
 #include "GraphicsEngine/HelperStructures.h"
 #include "GraphicsEngine/VkDraw.h"
+#include "TIO/functions.h"
 
-#include <functional>
-typedef std::function<double(double, double)> FunctionPointer;
 
 
 class BenchFunction : public VkDraw{
 public:
-    BenchFunction(VulkanEngine* app, FunctionPointer func);
+    BenchFunction(VulkanEngine* app, FunctionInfo info);
 
     glm::vec3 putOnFunction(glm::vec3 position);
     void wrapperTransform(glm::vec3& vertex);
@@ -22,6 +21,8 @@ public:
     
 private:
     FunctionPointer transformFunction;
+    FunctionInfo functionInfo;
+
     Transform transform;
     DrawModelInfo drawInfo;
     float modifier;
