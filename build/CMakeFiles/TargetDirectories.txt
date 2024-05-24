@@ -1,3 +1,0 @@
-E:/TIO_merged/build/CMakeFiles/someApp.dir
-E:/TIO_merged/build/CMakeFiles/ALL_BUILD.dir
-E:/TIO_merged/build/CMakeFiles/ZERO_CHECK.dir
