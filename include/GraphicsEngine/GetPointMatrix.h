@@ -20,36 +20,46 @@ inline CreateModelInfo getPointMatrix(int size, float step) {
 }
 
 
-inline Model getPointMatrix(VulkanEngine* app, CreateModelInfo modelInfo) {
-    return app->initModel(modelInfo.punkty, modelInfo.indeksy);
+inline Model getPointMatrix(VulkanEngine* vkEngine, CreateModelInfo modelInfo) {
+    return vkEngine->initModel(modelInfo.punkty, modelInfo.indeksy);
 }
 
-inline Model getPointMatrix(VulkanEngine* app, int size, float step) {
+inline Model getPointMatrix(VulkanEngine* vkEngine, int size, float step) {
     CreateModelInfo modelInfo = getPointMatrix(size, step);
-    return app->initModel(modelInfo.punkty, modelInfo.indeksy);
+    return vkEngine->initModel(modelInfo.punkty, modelInfo.indeksy);
 }
 
 
-
-inline Model getPointMatrix(VulkanEngine* app, float A, float B, int n) {
+inline Model getPointMatrix(VulkanEngine* vkEngine, float xMin, float xMax, float yMin, float yMax, int nX, int nY) {
     std::vector<Vertex> punkty;
     std::vector<uint32_t> indeksy;
     
-    float wymiar = abs(B-A);
-    float skok = wymiar/n;
-    glm::vec3 onlyA = {A, .0, A};
+    float wymiarX = abs(xMax - xMin);
+    float skokX = wymiarX/nX;
 
-    for(int q=0; q<n+1; q++)
-        for (int i = 0; i < n+1; i++) {
-            glm::vec3 middle = glm::vec3(q*skok, 0.0, i * skok) + onlyA;
+    float wymiarY = abs(yMax - yMin);
+    float skokY = wymiarY/nY;
+
+    glm::vec3 startPoint = {xMin, .0, yMin};
+
+    for(int x=0; x< nX+1; x++)
+        for (int y=0; y< nY+1; y++) {
+            glm::vec3 point = glm::vec3(x*skokX, 0.0, y*skokY) + startPoint;
             glm::vec3 color = {0, .99, .2};
-            Vertex v = { middle, color };
-            int index = q*n + i;
+            Vertex v = { point, color };
+            int index = x*nX + y;
 
             //std::cout<<index << "  " << glm::to_string(v.pos) <<std::endl;
             punkty.push_back(v);
             indeksy.push_back(index);
         }
     
-    return app->initModel(punkty, indeksy);
+    return vkEngine->initModel(punkty, indeksy);
+}
+
+
+
+
+inline Model getPointMatrix(VulkanEngine* vkEngine, float xMin, float xMax, int nX) {
+    return getPointMatrix(vkEngine, xMin, xMax, xMin, xMax, nX, nX);
 }

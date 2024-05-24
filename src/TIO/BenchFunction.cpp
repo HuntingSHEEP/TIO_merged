@@ -11,7 +11,7 @@ BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionInfo info)
     t.rotationAngle = 0.f;
 
     Pipeline pipeline = vkEngine->initPipeline({ "../resources/shaders/vert.spv" , "../resources/shaders/frag.spv", VK_PRIMITIVE_TOPOLOGY_POINT_LIST });
-    Model model = getPointMatrix(vkEngine, functionInfo.xMin, functionInfo.xMax, 100);
+    Model model = getPointMatrix(vkEngine, functionInfo.xMin, functionInfo.xMax, functionInfo.yMin, functionInfo.yMax, 100, 100);
     Texture paper = vkEngine->initTexture({ "../resources/textures/whitePaper2.jpg" });
 
     UniformBuffer uBuffer = vkEngine->initUniformBuffer();
