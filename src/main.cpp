@@ -14,15 +14,18 @@ int main(){
         VulkanEngine* vkEngine = new VulkanEngine();
         vkEngine->setupCallbacks(vkEngine->window);
 
-        //Przygotowanie sceny
+        //Funkcja testowa
         BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, himmelBlauTransformation);
+
+        //Graficzna reprezentacja mrówek
         std::vector<AntRender*> antsToRender{};
-
         for(int i=0; i<3; i++)
-            antsToRender.push_back(new AntRender(vkEngine));
+            antsToRender.push_back(new AntRender(vkEngine, 0.5, {0.99, 0.0, 0.51}));
 
-        //Mrowisko
-        Point nest{0., 0.};
+        //Graficzna reprezentacja mrowiska
+        AntRender* nestRender = new AntRender(vkEngine, 1.5, {0.5, 0.99, 0.2});
+
+        //Algorytm mrowiska
         APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), std::function<double(double, double)>(himmelBlau), {-6, 6, -6, 6});
 
 
@@ -43,17 +46,21 @@ int main(){
             {
                 antAlgorithm->update();
                 std::vector<Point> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
+                Point p;
 
                 for(int i=0; i<antsToRender.size(); i++){
-                    Point p = listaPozycjiMrowek[i];
+                    p = listaPozycjiMrowek[i];
                     antsToRender[i]->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
                 }
+
+                p = antAlgorithm->getNest();
+                nestRender->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
                 
                 timeToNextUpdate = 0.f;
             }
 
             //Rysowanie modeli
-            DrawAllOfThem models{{benchHimmelBlau->getDrawInfo()}};
+            DrawAllOfThem models{{benchHimmelBlau->getDrawInfo(), nestRender->getDrawInfo()}};
             for(auto& a : antsToRender)
                 models.allModels.push_back(a->getDrawInfo());
 

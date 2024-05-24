@@ -86,13 +86,13 @@ namespace std {
 
 
 
-void loadModel(const char* modelPath, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {
+void loadModel(ModelCreateInfo createInfo, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices) {
     tinyobj::attrib_t attrib;
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     std::string warn, err;
 
-    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, modelPath)) {
+    if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, createInfo.modelPath)) {
         throw std::runtime_error(warn + err);
     }
 
@@ -127,7 +127,7 @@ void loadModel(const char* modelPath, std::vector<Vertex>& vertices, std::vector
                 attrib.normals[3 * index.normal_index + 2],
             };
 
-            vertex.color = { 1.0f, 1.0f, 1.0f };
+            vertex.color = createInfo.color;
 
             if (uniqueVertices.count(vertex) == 0) {
                 uniqueVertices[vertex] = static_cast<uint32_t>(vertices.size());
@@ -201,11 +201,11 @@ VulkanEngine::~VulkanEngine(){
     
     }
 
-    Model VulkanEngine::initModel(ModelCreateInfo createInfo) {
+    Model VulkanEngine::initModel(ModelCreateInfo createInfo) { //jamnik
         std::vector<Vertex> vertices;
         std::vector<uint32_t> indices;
 
-        loadModel(createInfo.modelPath, vertices, indices);
+        loadModel(createInfo, vertices, indices);
 
         VkBuffer vertexBuffer, indexBuffer;
         VkDeviceMemory vertexBufferMemory, indexBufferMemory;
@@ -320,7 +320,8 @@ VulkanEngine::~VulkanEngine(){
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
 
-        std::cout << "MOUSE BUTTON: " << button <<" ACTION: " << action <<std::endl;
+        std::cout << "MOUSE BUTTON: " << button <<" ACTION: " << action << "  CAMERA POS/DIRECTION: "<<
+        glm::to_string(eyePosition) << "  " << glm::to_string(lookDirection) << std::endl;
 
 
         rmbIsPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;
@@ -1954,8 +1955,8 @@ void VulkanEngine::updateTime(){
 bool VulkanEngine::rmbIsPressed = false;
 glm::vec2 VulkanEngine::rmbPressed = glm::vec2(0,0);
 
-glm::vec3 VulkanEngine::eyePosition =   {0, -55, 0 } ;  //{ 70., 104., 3. };
-glm::vec3 VulkanEngine::lookDirection = { 0, 1.0, 0 };
+glm::vec3 VulkanEngine::eyePosition =   {-14.621359, 14.188881, -1.624332} ;  //{ 70., 104., 3. };
+glm::vec3 VulkanEngine::lookDirection = { 0.791916, -0.604220, 0.088249 };
 
 
 

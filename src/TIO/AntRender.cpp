@@ -1,12 +1,12 @@
 #include "TIO/AntRender.h"
 
-AntRender::AntRender(VulkanEngine* vkEngine){
+AntRender::AntRender(VulkanEngine* vkEngine, float antSize, glm::vec3 color){
     Texture paper = vkEngine->initTexture({ "../resources/textures/whitePaper2.jpg" });
-    Model sphere = vkEngine->initModel({ "../resources/models/sphere.obj" });
+    Model sphere = vkEngine->initModel({ "../resources/models/sphere.obj" , color});
     Pipeline pipeline = vkEngine->initPipeline({ "../resources/shaders/vert.spv" , "../resources/shaders/frag.spv", VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST});
    
    
-    Transform transform{{ -6., 0., 0. }, { 0.2, 0.2, 0.2 }, { 0., 0., 1. }, .0f};
+    Transform transform{{ -6., 0., 0. }, glm::vec3(antSize), { 0., 0., 1. }, .0f};
     modelInfo = createModel(vkEngine, sphere, pipeline, paper, transform);
 }
 
