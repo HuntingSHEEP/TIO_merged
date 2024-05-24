@@ -10,19 +10,12 @@
 namespace GlobalParams
 {
 	constexpr size_t ANT_MEMORY_SIZE = 2;
-	constexpr double NEIGHBORHOOD_SIZE = 10.0;
+	constexpr double NEIGHBORHOOD_SIZE = 6.0;
 	constexpr int MAX_FAILED_EXPLORATIONS_PER_SITE = 6;
 	constexpr int MAX_NUMBER_OF_RECRUITMENTS = 6;
 	constexpr int MAX_NEST_RELOCATIONS = 10;
 	constexpr int MAX_ANTS_EXPLORATIONS_PER_NEST = 10;
 }
-
-// Structure representing a point in real space
-struct Point
-{
-	double x = 0;
-	double y = 0;
-};
 
 // Structure used to save domain of parameters for function
 struct FunDomain
@@ -32,14 +25,44 @@ struct FunDomain
 	double yMin = 0.0;
 	double yMax = 0.0;
 
-	inline double getSizeX()
+	inline double getSizeX() const
 	{
 		return std::abs(xMax - xMin);
 	}
 
-	inline double getSizeY()
+	inline double getSizeY() const
 	{
 		return std::abs(yMax - yMin);
+	}
+};
+
+// Structure representing a point in real space
+struct Point
+{
+	double x = 0;
+	double y = 0;
+
+	inline Point clampToDomain(const FunDomain& _domain)
+	{
+		if(x < _domain.xMin)
+		{
+			x = _domain.xMin;
+		}
+		else if(x > _domain.xMax)
+		{
+			x = _domain.xMax;
+		}
+
+		if(y < _domain.yMin)
+		{
+			y = _domain.yMin;
+		}
+		else if(y > _domain.yMax)
+		{
+			y = _domain.yMax;
+		}
+		
+		return *this;
 	}
 };
 

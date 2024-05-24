@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali
+# Install script for directory: E:/TIO_merged
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/TIO_merged/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

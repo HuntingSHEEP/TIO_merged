@@ -31,6 +31,7 @@ int main(){
 
         float x = 5.9f;
         float z = 5.9f;
+        double timeToNextUpdate = 0.f;
 
         //Główna pętla rysująca
         while(!glfwWindowShouldClose(vkEngine->window)){
@@ -47,7 +48,12 @@ int main(){
             if(6 < z)
                 z = -6.f;
             */
-            if(!antAlgorithm->finished()){
+            if(timeToNextUpdate < 0.25f)
+            {
+                timeToNextUpdate += vkEngine->deltaTime;
+            }
+            else if(!antAlgorithm->finished())
+            {
                 antAlgorithm->update();
                 std::vector<Point> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
 
@@ -55,12 +61,9 @@ int main(){
                 printf("Got from algortihm (%5.5f, %5.5f) ", p.x, p.y);
                 lonelyAnt->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
                 std::cout<<"  ant position: "<<glm::to_string(lonelyAnt->getDrawInfo().transform.position)<<std::endl;
+
+                timeToNextUpdate = 0.f;
             }
-            
-
-
-            
-
 
             //Rysowanie modeli
             DrawAllOfThem models{{benchHimmelBlau->getDrawInfo(), lonelyAnt->getDrawInfo()}};

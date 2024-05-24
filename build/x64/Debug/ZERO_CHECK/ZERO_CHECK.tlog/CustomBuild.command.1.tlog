@@ -1,6 +1,6 @@
-^C:\USERS\AGLOW\ONEDRIVE\PULPIT\TIO_FINISHIT — KOPIA — KOPIA\WYSTAWAFRACTALI\BUILD\CMAKEFILES\18B1FE4DAC130FA4A0E1AC7AA598DD5D\GENERATE.STAMP.RULE
+^E:\TIO_MERGED\BUILD\CMAKEFILES\2BCE899AE4E7D9B5655061EF206CEB08\GENERATE.STAMP.RULE
 setlocal
-"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali" "-BC:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/aglow/OneDrive/Pulpit/TIO_FinishIT — kopia — kopia/wystawaFractali/build/someApp.sln"
+E:\CMake\bin\cmake.exe -SE:/TIO_merged -BE:/TIO_merged/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/TIO_merged/build/someApp.sln
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
