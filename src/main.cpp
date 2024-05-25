@@ -14,23 +14,25 @@ int main(){
         VulkanEngine* vkEngine = new VulkanEngine();
         vkEngine->setupCallbacks(vkEngine->window);
 
-        //Mrowisko
-        Point nest{0., 0.};
+        //Wybór funkcji testowej
+        FunctionInfo funkcjaTestowaInfo = sixHumpCamelInfo;// himmelBlauInfo;//sixHumpCamelInfo;
 
-        //Ant* ant = new Ant(&nest,  &std::function<double(double, double)>(himmelBlau) , 0);
-        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(1, std::function<double(double, double)>(himmelBlau), {-6, 6, -6, 6});
+        //Wizualizacji funkcji testowej
+        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, funkcjaTestowaInfo, 10.);
+
+        //Graficzna reprezentacja mrówek
+        std::vector<AntRender*> antsToRender{};
+        for(int i=0; i<3; i++)
+            antsToRender.push_back(new AntRender(vkEngine, 0.5, {0.99, 0.0, 0.51}));
+
+        //Graficzna reprezentacja mrowiska
+        AntRender* nestRender = new AntRender(vkEngine, 1.5, {0.5, 0.99, 0.2});
+
+        //Algorytm mrowiska
+        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), funkcjaTestowaInfo);
 
 
-        //Przygotowanie sceny
-        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, himmelBlauTransformation);
-        AntRender* lonelyAnt = new AntRender(vkEngine);
-
-
-        //std::vector<AntRender> antsToRender{lo}
-        
-
-        float x = 5.9f;
-        float z = 5.9f;
+        double timeToNextUpdate = 0.f;
 
         //Główna pętla rysująca
         while(!glfwWindowShouldClose(vkEngine->window)){
@@ -38,32 +40,33 @@ int main(){
             vkEngine->updateTime();
             vkEngine->updateCamera(2.);
 
-            /*
-            x += static_cast<float>(6.f * vkEngine->deltaTime);
-            if(6 < x){
-                z += 0.2f;
-                x = -6.f;
+
+            if(timeToNextUpdate < 0.25f)
+            {
+                timeToNextUpdate += vkEngine->deltaTime;
             }
-            if(6 < z)
-                z = -6.f;
-            */
-            if(!antAlgorithm->finished()){
+            else if(!antAlgorithm->finished())
+            {
                 antAlgorithm->update();
                 std::vector<Point> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
+                Point p;
 
-                Point p = listaPozycjiMrowek[0];
-                printf("Got from algortihm (%5.5f, %5.5f) ", p.x, p.y);
-                lonelyAnt->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
-                std::cout<<"  ant position: "<<glm::to_string(lonelyAnt->getDrawInfo().transform.position)<<std::endl;
+                for(int i=0; i<antsToRender.size(); i++){
+                    p = listaPozycjiMrowek[i];
+                    antsToRender[i]->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
+                }
+
+                p = antAlgorithm->getNest();
+                nestRender->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
+                
+                timeToNextUpdate = 0.f;
             }
-            
-
-
-            
-
 
             //Rysowanie modeli
-            DrawAllOfThem models{{benchHimmelBlau->getDrawInfo(), lonelyAnt->getDrawInfo()}};
+            DrawAllOfThem models{{benchHimmelBlau->getDrawInfo(), nestRender->getDrawInfo()}};
+            for(auto& a : antsToRender)
+                models.allModels.push_back(a->getDrawInfo());
+
             vkEngine->drawFrameAnother(models);
         }
         vkDeviceWaitIdle(vkEngine->device);

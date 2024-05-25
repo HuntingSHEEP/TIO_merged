@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "TIO/Utils.hpp"
+#include "TIO/functions.h"
 
 // Class representing an ant
 class Ant
@@ -20,11 +21,12 @@ public:
 public:
 	Ant() = delete;
 
-	Ant(Point* _nest, std::function<double(double, double)>* _fun, const int _antIdx)
+	Ant(Point* _nest, std::function<double(double, double)>* _fun, const int _antIdx, FunDomain* _funDomain)
 		: m_nest(_nest)
 		, m_fun(_fun)
-		, m_aSite(std::pow(100, 1.0 / _antIdx) / 100.0)	
+		, m_aSite(std::pow(100, 1.0 / (_antIdx + 1)) / 100.0)	
 		, m_aLocal(m_aSite / 10.0)
+		, m_funDomain(_funDomain)
 	{
 		if (m_memory.empty())
 		{
@@ -46,7 +48,7 @@ public:
 	{
 		if (m_memory.size() < GlobalParams::ANT_MEMORY_SIZE)
 		{
-			HuntingSite newHuntingSite = { getRandomPointInCircle(*m_nest, GlobalParams::NEIGHBORHOOD_SIZE * m_aSite) };
+			HuntingSite newHuntingSite = { getRandomPointInCircle(*m_nest, m_funDomain->getNeighbourhoodSize() * m_aSite).clampToDomain(*m_funDomain) };
 			exploreSite(newHuntingSite);
 			m_memory.push_back(newHuntingSite);
 			m_currentPosition = { newHuntingSite.s.x, newHuntingSite.s.y };
@@ -120,7 +122,7 @@ private:
 	{
 		double valueInS = (*m_fun)(_huntingSite.s.x, _huntingSite.s.y);
 
-		auto [x, y] = getRandomPointInCircle(_huntingSite.s, GlobalParams::NEIGHBORHOOD_SIZE * m_aLocal);
+		auto [x, y] = getRandomPointInCircle(_huntingSite.s, m_funDomain->getNeighbourhoodSize() * m_aLocal).clampToDomain(*m_funDomain);
 		double valueInExploredPoint = (*m_fun)(x, y);
 
 		if (valueInExploredPoint > valueInS)
@@ -142,6 +144,7 @@ private:
 private:
 	Point* m_nest = nullptr;
 	std::function<double(double, double)>* m_fun = nullptr;
+	FunDomain* m_funDomain = nullptr;
 
 	std::vector<HuntingSite> m_memory = {};
 	HuntingSite m_lastExploredSite = {};
@@ -156,6 +159,9 @@ class APIAntAlgorithm
 {
 	// Public methods
 public:
+	APIAntAlgorithm(const int _antsAmount, FunctionInfo _functionInfo)
+		: APIAntAlgorithm(_antsAmount, _functionInfo.functionPointer, {_functionInfo.xMin, _functionInfo.xMax, _functionInfo.yMin, _functionInfo.yMax}){}
+
 	APIAntAlgorithm(const int _antsAmount, const std::function<double(double, double)>& _fun, const FunDomain& _funDomain)
 		: m_fun(_fun)
 		, m_funDomain(_funDomain)
@@ -165,7 +171,7 @@ public:
 			m_ants.reserve(_antsAmount);
 			for (int i = 0; i < _antsAmount; i++)
 			{
-				m_ants.push_back(Ant(&m_nest, &m_fun, i));
+				m_ants.push_back(Ant(&m_nest, &m_fun, i, &m_funDomain));
 			}
 		}
 

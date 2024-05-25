@@ -2,15 +2,21 @@
 #include "GraphicsEngine/GetPointMatrix.h"
 
 
-BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionPointer func) : transformFunction(func){
+BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionInfo info, float size) 
+: transformFunction(info.functionPointer), functionInfo(info), graphSize(size){
+    float xScale = functionInfo.xMax - functionInfo.xMin;
+    float yScale = functionInfo.yMax - functionInfo.yMin;
+
+    representationScale = { 1.* (graphSize/xScale), 1., 1. * (graphSize/yScale) };
+
     Transform t{};
     t.position = { 0., 0., 0. };
-    t.scale = { 1., 1., 1. };
+    t.scale = representationScale; //{1., 1., 1.};
     t.rotationAxis = { 0., 0., 1. };
     t.rotationAngle = 0.f;
 
     Pipeline pipeline = vkEngine->initPipeline({ "../resources/shaders/vert.spv" , "../resources/shaders/frag.spv", VK_PRIMITIVE_TOPOLOGY_POINT_LIST });
-    Model model = getPointMatrix(vkEngine, -6, 6, 100);
+    Model model = getPointMatrix(vkEngine, functionInfo.xMin, functionInfo.xMax, functionInfo.yMin, functionInfo.yMax, 100, 100);
     Texture paper = vkEngine->initTexture({ "../resources/textures/whitePaper2.jpg" });
 
     UniformBuffer uBuffer = vkEngine->initUniformBuffer();
@@ -20,14 +26,19 @@ BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionPointer func) : tr
     this->drawInfo = {model, t, pipeline, uBuffer, dSet};
 };
 
+void BenchFunction::wrapperTransform(glm::vec3& vertex){
+    glm::vec3 p = vertex;
+    vertex.y = static_cast<float>(transformFunction(p.x, p.z));
+};
+
 
 void BenchFunction::mapBenchFunction(VulkanEngine* vkEngine, Model* model) {
     std::vector<Vertex> vertices = model->vertices;
 
     for (auto& v : vertices)
-        transformFunction(v.pos);
+        wrapperTransform(v.pos);
     
-    normalize(vertices, 10.);
+    normalize(vertices, graphSize);
     colorizeByDepth(vertices);
     
     vkEngine->updateModel(model, vertices);
@@ -54,9 +65,10 @@ void BenchFunction::normalize(std::vector<Vertex>& vertices, float scale){
 }
 
 glm::vec3 BenchFunction::putOnFunction(glm::vec3 position){
-    transformFunction(position);
+    wrapperTransform(position);
 
     position.y *= modifier;
+    position *= representationScale;
     return position;
 }
 

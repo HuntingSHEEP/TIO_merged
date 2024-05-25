@@ -63,6 +63,7 @@ struct Transform {
 
 struct ModelCreateInfo {
     const char* modelPath;
+    glm::vec3 color = { 1.0f, 0.1f, 0.7f };
 };
 
 struct Model {
