@@ -27,8 +27,11 @@ BenchFunction::BenchFunction(VulkanEngine* vkEngine,  FunctionInfo info, float s
 };
 
 void BenchFunction::wrapperTransform(glm::vec3& vertex){
-    glm::vec3 p = vertex;
-    vertex.y = static_cast<float>(transformFunction(p.x, p.z));
+    double* x = new double[2];
+    x[0] = vertex.x;
+    x[1] = vertex.z;
+    
+    vertex.y = static_cast<float>(transformFunction(x, 2));
 };
 
 
