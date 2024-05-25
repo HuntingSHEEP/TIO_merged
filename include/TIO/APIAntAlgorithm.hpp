@@ -3,43 +3,36 @@
 #include <functional>
 #include <vector>
 
-#include "TIO/Utils.hpp"
-#include "TIO/functions.h"
+#include "Utils.hpp"
 
 // Class representing an ant
+template<size_t Dims>
 class Ant
 {
-	// Public classes/structures
-public:
-	struct HuntingSite
-	{
-		Point s = {};
-		int failureCount = 0;
-	};
-
 	// Public methods
 public:
 	Ant() = delete;
 
-	Ant(Point* _nest, std::function<double(double, double)>* _fun, const int _antIdx, FunDomain* _funDomain)
+	Ant(Point<Dims>* _nest, std::function<double(double*, size_t)>* _fun, const int _antIdx, FunDomain<Dims>* _funDomain)
 		: m_nest(_nest)
 		, m_fun(_fun)
-		, m_aSite(std::pow(100, 1.0 / (_antIdx + 1)) / 100.0)	
+		, m_aSite(std::pow(100, 1.0 / (_antIdx + 1)) / 100.0)
 		, m_aLocal(m_aSite / 10.0)
 		, m_funDomain(_funDomain)
 	{
+		m_bestVal = std::numeric_limits<double>::infinity() * (GlobalParams::MINIMIZE ? 1 : -1); 
 		if (m_memory.empty())
 		{
 			m_memory.reserve(GlobalParams::ANT_MEMORY_SIZE);
 		}
 	}
 
-	HuntingSite getSiteByIndex(int _index) const
+	HuntingSite<Dims> getSiteByIndex(int _index) const
 	{
 		return m_memory[_index];
 	}
 
-	void setSiteAtIndex(const HuntingSite& _site, int _index)
+	void setSiteAtIndex(const HuntingSite<Dims>& _site, int _index)
 	{
 		m_memory[_index] = _site;
 	}
@@ -48,24 +41,24 @@ public:
 	{
 		if (m_memory.size() < GlobalParams::ANT_MEMORY_SIZE)
 		{
-			HuntingSite newHuntingSite = { getRandomPointInCircle(*m_nest, m_funDomain->getNeighbourhoodSize() * m_aSite).clampToDomain(*m_funDomain) };
+			HuntingSite<Dims> newHuntingSite = { getRandomPointInNeighbourhood(*m_nest, m_funDomain->getNeighbourhoodSize() * m_aSite).clampToDomain(*m_funDomain) };
 			exploreSite(newHuntingSite);
 			m_memory.push_back(newHuntingSite);
-			m_currentPosition = { newHuntingSite.s.x, newHuntingSite.s.y };
+			m_currentPosition = newHuntingSite.s;
 		}
 		else
 		{
 			if (m_lastExplorationSuccessful)
 			{
 				exploreSite(m_lastExploredSite);
-				m_currentPosition = { m_lastExploredSite.s.x, m_lastExploredSite.s.y };
+				m_currentPosition = m_lastExploredSite.s;
 			}
 			else
 			{
 				int randomIdx = randomInt(0, GlobalParams::ANT_MEMORY_SIZE - 1);
-				HuntingSite& siteFromMemory = m_memory[randomIdx];
+				HuntingSite siteFromMemory = m_memory[randomIdx];
 				exploreSite(siteFromMemory);
-				m_currentPosition = { siteFromMemory.s.x, siteFromMemory.s.y };
+				m_currentPosition = siteFromMemory.s;
 			}
 		}
 	}
@@ -79,7 +72,7 @@ public:
 
 	inline void removeUnsuccessfulSites()
 	{
-		std::vector<HuntingSite> onlySuccessfulSites = {};
+		std::vector<HuntingSite<Dims>> onlySuccessfulSites = {};
 		onlySuccessfulSites.reserve(GlobalParams::ANT_MEMORY_SIZE);
 
 		for (int i = 0; i < m_memory.size(); i++)
@@ -93,17 +86,17 @@ public:
 		m_memory = onlySuccessfulSites;
 	}
 
-	int getBestSiteIndex() const
+	int getBestSiteIndex()
 	{
 		int bestSiteIdx = -1;
-		double max = -std::numeric_limits<double>::infinity();
+		double bestValue = std::numeric_limits<double>::infinity() * (GlobalParams::MINIMIZE ? 1 : -1);
 
 		for (int i = 0; i < m_memory.size(); i++)
 		{
-			double valueAtCenterOfSite = (*m_fun)(m_memory[i].s.x, m_memory[i].s.y);
-			if (valueAtCenterOfSite > max)
+			double valueAtCenterOfSite = (*m_fun)(m_memory[i].s.pos, Dims);
+			if (isBetter(valueAtCenterOfSite, bestValue))
 			{
-				max = valueAtCenterOfSite;
+				bestValue = valueAtCenterOfSite;
 				bestSiteIdx = i;
 			}
 		}
@@ -111,24 +104,24 @@ public:
 		return bestSiteIdx;
 	}
 
-	inline Point getCurrentPosition() const
+	inline Point<Dims> getCurrentPosition() const
 	{
 		return m_currentPosition;
 	}
 
 	// Private methods
 private:
-	void exploreSite(HuntingSite& _huntingSite)
+	void exploreSite(HuntingSite<Dims>& _huntingSite)
 	{
-		double valueInS = (*m_fun)(_huntingSite.s.x, _huntingSite.s.y);
+		double valueInS = (*m_fun)(_huntingSite.s.pos, Dims);
 
-		auto [x, y] = getRandomPointInCircle(_huntingSite.s, m_funDomain->getNeighbourhoodSize() * m_aLocal).clampToDomain(*m_funDomain);
-		double valueInExploredPoint = (*m_fun)(x, y);
+		Point<Dims> point = getRandomPointInNeighbourhood(_huntingSite.s, m_funDomain->getNeighbourhoodSize() * m_aLocal).clampToDomain(*m_funDomain);
+		double valueInExploredPoint = (*m_fun)(point.pos, Dims);
 
-		if (valueInExploredPoint > valueInS)
+		if (isBetter(valueInExploredPoint, valueInS))
 		{
 			m_lastExplorationSuccessful = true;
-			_huntingSite.s = { x, y };
+			_huntingSite.s = point;
 			_huntingSite.failureCount = 0;
 		}
 		else
@@ -142,19 +135,22 @@ private:
 
 	// Private memebers
 private:
-	Point* m_nest = nullptr;
-	std::function<double(double, double)>* m_fun = nullptr;
-	FunDomain* m_funDomain = nullptr;
+	Point<Dims>* m_nest = nullptr;
+	std::function<double(double*, size_t)>* m_fun = nullptr;
+	FunDomain<Dims>* m_funDomain = nullptr;
 
-	std::vector<HuntingSite> m_memory = {};
-	HuntingSite m_lastExploredSite = {};
+	std::vector<HuntingSite<Dims>> m_memory = {};
+	HuntingSite<Dims> m_lastExploredSite = {};
 	bool m_lastExplorationSuccessful = false;
 	const double m_aSite;
 	const double m_aLocal;
-	Point m_currentPosition = {};
+	Point<Dims> m_currentPosition = {};
+	double m_bestVal = {};
+	Point<Dims> m_bestPos = {};
 };
 
 // Class representing an API ant algorithm
+template<size_t Dims>
 class APIAntAlgorithm
 {
 	// Public methods
@@ -162,10 +158,13 @@ public:
 	APIAntAlgorithm(const int _antsAmount, FunctionInfo _functionInfo)
 		: APIAntAlgorithm(_antsAmount, _functionInfo.functionPointer, {_functionInfo.xMin, _functionInfo.xMax, _functionInfo.yMin, _functionInfo.yMax}){}
 
-	APIAntAlgorithm(const int _antsAmount, const std::function<double(double, double)>& _fun, const FunDomain& _funDomain)
+
+	APIAntAlgorithm(const int _antsAmount, const std::function<double(double*, size_t)>& _fun, const FunDomain<Dims>& _funDomain)
 		: m_fun(_fun)
 		, m_funDomain(_funDomain)
 	{
+		m_nest = m_funDomain.getMiddlePoint();
+
 		if (m_ants.empty())
 		{
 			m_ants.reserve(_antsAmount);
@@ -174,11 +173,9 @@ public:
 				m_ants.push_back(Ant(&m_nest, &m_fun, i, &m_funDomain));
 			}
 		}
-
-		m_nest = { m_funDomain.xMin + m_funDomain.getSizeX() / 2, m_funDomain.yMin + m_funDomain.getSizeY() / 2 };
 	}
 
-	inline Point getNest()
+	inline Point<Dims> getNest()
 	{
 		return m_nest;
 	}
@@ -188,9 +185,9 @@ public:
 		return m_nestRelocationCounter >= GlobalParams::MAX_NEST_RELOCATIONS;
 	}
 
-	inline std::vector<Point> getAntsPositions()
+	inline std::vector<Point<Dims>> getAntsPositions()
 	{
-		std::vector<Point> positions;
+		std::vector<Point<Dims>> positions;
 
 		for (const auto& ant : m_ants)
 		{
@@ -234,8 +231,10 @@ public:
 private:
 	void performRecruitment()
 	{
-		if(m_ants.size() == 1)
+		if (m_ants.size() == 1)
+		{
 			return;
+		}
 		// idxWinner will hold the idx of an ant which had higher value of bench function.
 		// At the beginning it is choosen randomly.
 		int idxWinner = randomInt(0, static_cast<int>(m_ants.size() - 1));
@@ -251,8 +250,8 @@ private:
 				idxDrawn = randomInt(0, static_cast<int>(m_ants.size() - 1));
 			} while (idxWinner == idxDrawn);
 
-			Ant& winnerAnt = m_ants[idxWinner];
-			Ant& drawnAnt = m_ants[idxDrawn];
+			Ant<Dims>& winnerAnt = m_ants[idxWinner];
+			Ant<Dims>& drawnAnt = m_ants[idxDrawn];
 
 			const int winnerSiteIdx = winnerAnt.getBestSiteIndex();
 			const int drawnSiteIdx = drawnAnt.getBestSiteIndex();
@@ -276,16 +275,16 @@ private:
 			}
 			else
 			{
-				const Ant::HuntingSite& winnerSite = winnerAnt.getSiteByIndex(winnerSiteIdx);
-				const Ant::HuntingSite& drawnSite = drawnAnt.getSiteByIndex(drawnSiteIdx);
+				HuntingSite<Dims> winnerSite = winnerAnt.getSiteByIndex(winnerSiteIdx);
+				HuntingSite<Dims> drawnSite = drawnAnt.getSiteByIndex(drawnSiteIdx);
 
-				const double valWinner = m_fun(winnerSite.s.x, winnerSite.s.y);
-				const double valDrawn = m_fun(drawnSite.s.x, drawnSite.s.y);
+				const double valWinner = m_fun(winnerSite.s.pos, Dims);
+				const double valDrawn = m_fun(drawnSite.s.pos, Dims);
 
 				// Replace site depending on the results
-				if (valWinner >= valDrawn)
+				if (isBetter(valWinner, valDrawn))
 				{
-					// Value of winner is higher or equal to that of drawn - do not change the index of the winner
+					// Value of winner is higher (or lower) to that of drawn - do not change the index of the winner
 					drawnAnt.setSiteAtIndex(winnerSite, drawnSiteIdx);
 				}
 				else
@@ -299,12 +298,12 @@ private:
 
 	void relocateNest()
 	{
-		double max = -std::numeric_limits<double>::infinity();
-		Point bestSiteCenter = {};
+		double bestVal = std::numeric_limits<double>::infinity() * (GlobalParams::MINIMIZE ? 1 : -1);
+		Point<Dims> bestSiteCenter = {};
 
 		for (int i = 0; i < m_ants.size(); i++)
 		{
-			const Ant& ant = m_ants[i];
+			Ant<Dims>& ant = m_ants[i];
 			const int siteIdx = ant.getBestSiteIndex();
 
 			if (siteIdx == -1)
@@ -312,12 +311,12 @@ private:
 				continue;
 			}
 
-			Ant::HuntingSite site = ant.getSiteByIndex(siteIdx);
-			const double val = m_fun(site.s.x, site.s.y);
+			HuntingSite<Dims> site = ant.getSiteByIndex(siteIdx);
+			const double val = m_fun(site.s.pos, Dims);
 
-			if (val > max)
+			if (isBetter(val, bestVal))
 			{
-				max = val;
+				bestVal = val;
 				bestSiteCenter = site.s;
 			}
 		}
@@ -327,11 +326,10 @@ private:
 
 	// Private members
 private:
-	std::vector<Ant> m_ants = {};
-	Point m_nest = {};
-
-	std::function<double(double, double)> m_fun = {};
-	FunDomain m_funDomain = {};
+	std::vector<Ant<Dims>> m_ants = {};
+	Point<Dims> m_nest = {};
+	FunDomain<Dims> m_funDomain = {};
+	std::function<double(double*, size_t)> m_fun = {};
 	int m_nestRelocationCounter = 0;
 	int m_antsExplorationCounter = 0;
 };

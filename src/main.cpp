@@ -8,6 +8,11 @@
 
 #include "TIO/APIAntAlgorithm.hpp"
 
+double himmelblau2(double* _vals, size_t _dims)
+{
+    return pow(_vals[0] * _vals[0] + _vals[1] - 11, 2) + pow(_vals[0] + _vals[1] * _vals[1] - 7, 2);
+}
+
 int main(){
     try{
         //Inicjowanie silnika renderującego
@@ -15,7 +20,7 @@ int main(){
         vkEngine->setupCallbacks(vkEngine->window);
 
         //Wybór funkcji testowej
-        FunctionInfo funkcjaTestowaInfo = sixHumpCamelInfo;// himmelBlauInfo;//sixHumpCamelInfo;
+        FunctionInfo funkcjaTestowaInfo = himmelBlauInfo;// himmelBlauInfo;//sixHumpCamelInfo;
 
         //Wizualizacji funkcji testowej
         BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, funkcjaTestowaInfo, 10.);
@@ -29,8 +34,13 @@ int main(){
         AntRender* nestRender = new AntRender(vkEngine, 1.5, {0.5, 0.99, 0.2});
 
         //Algorytm mrowiska
-        APIAntAlgorithm* antAlgorithm = new APIAntAlgorithm(static_cast<int>(antsToRender.size()), funkcjaTestowaInfo);
-
+        const size_t dims = 2;
+        // APIAntAlgorithm<dims>* antAlgorithm = new APIAntAlgorithm<dims>(static_cast<int>(antsToRender.size()), funkcjaTestowaInfo);
+        APIAntAlgorithm<dims>* antAlgorithm = new APIAntAlgorithm<dims>(
+            static_cast<int>(antsToRender.size())
+            , std::function<double(double*, size_t)>(himmelblau2)
+            , FunDomain<dims>(-6.0, 6.0)
+        );
 
         double timeToNextUpdate = 0.f;
 
@@ -48,16 +58,16 @@ int main(){
             else if(!antAlgorithm->finished())
             {
                 antAlgorithm->update();
-                std::vector<Point> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
-                Point p;
+                std::vector<Point<dims>> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
+                Point<dims> p;
 
                 for(int i=0; i<antsToRender.size(); i++){
                     p = listaPozycjiMrowek[i];
-                    antsToRender[i]->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
+                    antsToRender[i]->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.pos[0], 0., p.pos[1]});
                 }
 
                 p = antAlgorithm->getNest();
-                nestRender->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.x, 0., p.y});
+                nestRender->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.pos[0], 0., p.pos[1]});
                 
                 timeToNextUpdate = 0.f;
             }
