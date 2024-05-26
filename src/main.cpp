@@ -12,7 +12,7 @@
 int main(){
     try{
         //Wybór funkcji testowej
-        FunctionInfo funkcjaTestowaInfo = boothInfo;
+        FunctionInfo funkcjaTestowaInfo = himmelBlauInfo;
 
         //Liczba wymiarów
         const size_t dims = 2;
@@ -38,6 +38,19 @@ int main(){
             }
             else if(!antAlgorithm->finished()){
                 antAlgorithm->update();
+
+                // After the algorithm finished its work, display the best place found and it's coordinates
+                if(antAlgorithm->finished())
+                {
+                    auto [point, value] = antAlgorithm->getBest();
+                    std::cout << "Best value found in point (";
+                    for(int i = 0; i < dims; i++)
+                    {
+                        std::cout << point.pos[i] << ( i != dims - 1 ? ", " : "");
+                    }
+                    std::cout << ") with value: " << value << ".\n";
+                }
+
                 anthillRenderer->update(antAlgorithm->getAntsPositions(), antAlgorithm->getNest());
                 timeToNextUpdate = 0.f;
             }
