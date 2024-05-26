@@ -58,6 +58,18 @@ int main(){
             else if(!antAlgorithm->finished())
             {
                 antAlgorithm->update();
+
+                // After the algorithm finished its work, display the best place found and it's coordinates
+                if(antAlgorithm->finished())
+                {
+                    auto [point, value] = antAlgorithm->getBest();
+                    std::cout << "Best value found in point (";
+                    for(int i = 0; i < dims; i++)
+                    {
+                        std::cout << point.pos[i] << ( i != dims - 1 ? ", " : "");
+                    }
+                    std::cout << ") with value: " << value << ".\n";
+                }
                 std::vector<Point<dims>> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
                 Point<dims> p;
 

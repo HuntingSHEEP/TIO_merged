@@ -109,6 +109,16 @@ public:
 		return m_currentPosition;
 	}
 
+	inline Point<Dims> getBestPos() const
+	{
+		return m_bestPos;
+	}
+
+	inline double getBestVal() const
+	{
+		return m_bestVal;
+	}
+
 	// Private methods
 private:
 	void exploreSite(HuntingSite<Dims>& _huntingSite)
@@ -123,12 +133,26 @@ private:
 			m_lastExplorationSuccessful = true;
 			_huntingSite.s = point;
 			_huntingSite.failureCount = 0;
+
+			if(isBetter(valueInExploredPoint, m_bestVal))
+			{
+				m_bestVal = valueInExploredPoint;
+				m_bestPos = point;
+			}
 		}
 		else
 		{
 			m_lastExplorationSuccessful = false;
 			_huntingSite.failureCount++;
+
+			if(isBetter(valueInS, m_bestVal))
+			{
+				m_bestVal = valueInS;
+				m_bestPos = _huntingSite.s;
+			}
 		}
+
+		if(valueInExploredPoint)
 
 		m_lastExploredSite = _huntingSite;
 	}
@@ -225,6 +249,24 @@ public:
 
 			m_antsExplorationCounter = 0;
 		}
+	}
+
+	std::pair<Point<Dims>, double> getBest()
+	{
+		Point<Dims> point;
+		double val = std::numeric_limits<double>::infinity() * (GlobalParams::MINIMIZE ? 1 : -1);
+
+		for(const auto& ant : m_ants)
+		{
+			double antValue = ant.getBestVal();
+			if(isBetter(antValue, val))
+			{
+				val = antValue;
+				point = ant.getBestPos();
+			}
+		}
+
+		return { point, val };
 	}
 
 	// Private methods
