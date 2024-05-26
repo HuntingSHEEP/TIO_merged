@@ -8,10 +8,7 @@
 
 #include "TIO/APIAntAlgorithm.hpp"
 
-double himmelblau2(double* _vals, size_t _dims)
-{
-    return pow(_vals[0] * _vals[0] + _vals[1] - 11, 2) + pow(_vals[0] + _vals[1] * _vals[1] - 7, 2);
-}
+
 
 int main(){
     try{
@@ -20,7 +17,7 @@ int main(){
         vkEngine->setupCallbacks(vkEngine->window);
 
         //Wybór funkcji testowej
-        FunctionInfo funkcjaTestowaInfo = himmelBlauInfo;// himmelBlauInfo;//sixHumpCamelInfo;
+        FunctionInfo funkcjaTestowaInfo = shubertInfo;
 
         //Wizualizacji funkcji testowej
         BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, funkcjaTestowaInfo, 10.);
@@ -38,8 +35,8 @@ int main(){
         // APIAntAlgorithm<dims>* antAlgorithm = new APIAntAlgorithm<dims>(static_cast<int>(antsToRender.size()), funkcjaTestowaInfo);
         APIAntAlgorithm<dims>* antAlgorithm = new APIAntAlgorithm<dims>(
             static_cast<int>(antsToRender.size())
-            , std::function<double(double*, size_t)>(himmelblau2)
-            , FunDomain<dims>(-6.0, 6.0)
+            , std::function<double(double*, size_t)>(funkcjaTestowaInfo.functionPointer)
+            , FunDomain<dims>(funkcjaTestowaInfo.xMin, funkcjaTestowaInfo.xMax)
         );
 
         double timeToNextUpdate = 0.f;
