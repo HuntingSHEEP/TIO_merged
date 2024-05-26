@@ -320,8 +320,8 @@ VulkanEngine::~VulkanEngine(){
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
 
-        std::cout << "MOUSE BUTTON: " << button <<" ACTION: " << action << "  CAMERA POS/DIRECTION: "<<
-        glm::to_string(eyePosition) << "  " << glm::to_string(lookDirection) << std::endl;
+        //std::cout << "MOUSE BUTTON: " << button <<" ACTION: " << action << "  CAMERA POS/DIRECTION: "<<
+        //glm::to_string(eyePosition) << "  " << glm::to_string(lookDirection) << std::endl;
 
 
         rmbIsPressed = button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS;

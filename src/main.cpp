@@ -5,90 +5,47 @@
 #include "TIO/BenchFunction.h"
 #include "TIO/AntRender.h"
 #include "TIO/functions.h"
-
 #include "TIO/APIAntAlgorithm.hpp"
-
+#include "TIO/AnthillRenderer.h"
 
 
 int main(){
     try{
-        //Inicjowanie silnika renderującego
-        VulkanEngine* vkEngine = new VulkanEngine();
-        vkEngine->setupCallbacks(vkEngine->window);
-
         //Wybór funkcji testowej
-        FunctionInfo funkcjaTestowaInfo = shubertInfo;
+        FunctionInfo funkcjaTestowaInfo = boothInfo;
 
-        //Wizualizacji funkcji testowej
-        BenchFunction* benchHimmelBlau = new BenchFunction(vkEngine, funkcjaTestowaInfo, 10.);
-
-        //Graficzna reprezentacja mrówek
-        std::vector<AntRender*> antsToRender{};
-        for(int i=0; i<3; i++)
-            antsToRender.push_back(new AntRender(vkEngine, 0.5, {0.99, 0.0, 0.51}));
-
-        //Graficzna reprezentacja mrowiska
-        AntRender* nestRender = new AntRender(vkEngine, 1.5, {0.5, 0.99, 0.2});
-
-        //Algorytm mrowiska
+        //Liczba wymiarów
         const size_t dims = 2;
-        // APIAntAlgorithm<dims>* antAlgorithm = new APIAntAlgorithm<dims>(static_cast<int>(antsToRender.size()), funkcjaTestowaInfo);
+
+        //Liczba mrówek
+        const int antsCount = 5;
+
+        //Algorytm mrówkowy
         APIAntAlgorithm<dims>* antAlgorithm = new APIAntAlgorithm<dims>(
-            static_cast<int>(antsToRender.size())
+            antsCount
             , std::function<double(double*, size_t)>(funkcjaTestowaInfo.functionPointer)
             , FunDomain<dims>(funkcjaTestowaInfo.xMin, funkcjaTestowaInfo.xMax)
         );
 
+        AnthillRenderer* anthillRenderer = new AnthillRenderer(funkcjaTestowaInfo, antsCount, antAlgorithm);
         double timeToNextUpdate = 0.f;
 
-        //Główna pętla rysująca
-        while(!glfwWindowShouldClose(vkEngine->window)){
-            glfwPollEvents();
-            vkEngine->updateTime();
-            vkEngine->updateCamera(2.);
+        while(anthillRenderer->windowStillOpened()){
+            anthillRenderer->enginePoll();
 
-
-            if(timeToNextUpdate < 0.25f)
-            {
-                timeToNextUpdate += vkEngine->deltaTime;
+            if(timeToNextUpdate < 0.25f){
+                timeToNextUpdate += anthillRenderer->getDeltaTime();
             }
-            else if(!antAlgorithm->finished())
-            {
+            else if(!antAlgorithm->finished()){
                 antAlgorithm->update();
-
-                // After the algorithm finished its work, display the best place found and it's coordinates
-                if(antAlgorithm->finished())
-                {
-                    auto [point, value] = antAlgorithm->getBest();
-                    std::cout << "Best value found in point (";
-                    for(int i = 0; i < dims; i++)
-                    {
-                        std::cout << point.pos[i] << ( i != dims - 1 ? ", " : "");
-                    }
-                    std::cout << ") with value: " << value << ".\n";
-                }
-                std::vector<Point<dims>> listaPozycjiMrowek = antAlgorithm->getAntsPositions();
-                Point<dims> p;
-
-                for(int i=0; i<antsToRender.size(); i++){
-                    p = listaPozycjiMrowek[i];
-                    antsToRender[i]->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.pos[0], 0., p.pos[1]});
-                }
-
-                p = antAlgorithm->getNest();
-                nestRender->getDrawInfo().transform.position = benchHimmelBlau->putOnFunction({p.pos[0], 0., p.pos[1]});
-                
+                anthillRenderer->update(antAlgorithm->getAntsPositions(), antAlgorithm->getNest());
                 timeToNextUpdate = 0.f;
             }
 
-            //Rysowanie modeli
-            DrawAllOfThem models{{benchHimmelBlau->getDrawInfo(), nestRender->getDrawInfo()}};
-            for(auto& a : antsToRender)
-                models.allModels.push_back(a->getDrawInfo());
-
-            vkEngine->drawFrameAnother(models);
+            anthillRenderer->draw();
         }
-        vkDeviceWaitIdle(vkEngine->device);
+
+        anthillRenderer->finish();
     }
     catch(const std::exception& e){std::cout<< "ERROR: "<<e.what()<<std::endl;}
     catch(...){std::cout<< "Unknown error"<<std::endl;}
