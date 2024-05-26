@@ -12,7 +12,7 @@
 int main(){
     try{
         //Wybór funkcji testowej
-        FunctionInfo funkcjaTestowaInfo = himmelBlauInfo;
+        FunctionInfo funkcjaTestowaInfo = boothInfo;
 
         //Liczba wymiarów
         const size_t dims = 2;
