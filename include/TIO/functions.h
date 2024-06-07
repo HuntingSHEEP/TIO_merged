@@ -23,9 +23,9 @@ double himmelBlau(double* x, size_t dims);
 double sixHumpCamel(double* x, size_t dims);
 double shubert(double* x, size_t dims);
 double levy(double* x, size_t dims);
-double f5LisieNory(double* x, size_t dims);
+double f5(double* x, size_t dims);
 
-
+const FunctionInfo f1Info = { f1, -10.f, 10.f, -10.f, 10.f };
 const FunctionInfo rastriginInfo = { rastrigin, -5.f, 5.f, -5.f, 5.f };
 const FunctionInfo schwefelInfo= { schwefel, -500.f, 500.f, -500.f, 500.f };
 const FunctionInfo boothInfo = { booth, -10.f, 10.f, -10.f, 10.f };
@@ -34,3 +34,5 @@ const FunctionInfo himmelBlauInfo = { himmelBlau, -5.f, 5.f, -5.f, 5.f };
 const FunctionInfo sixHumpCamelInfo = { sixHumpCamel, -2.f, 2.f, -2.f, 2.f };
 const FunctionInfo shubertInfo = { shubert, -2.f, 2.f, -2.f, 2.f };
 const FunctionInfo levyInfo = { levy, -10.f, 10.f, -10.f, 10.f };
+const FunctionInfo f5Info = { f5, -50.f, 50.f, -50.f, 50.f };
+

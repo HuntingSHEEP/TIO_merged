@@ -12,7 +12,7 @@
 int main(){
     try{
         //Wybór funkcji testowej
-        FunctionInfo funkcjaTestowaInfo = schwefelInfo;
+        FunctionInfo funkcjaTestowaInfo = f5Info;
 
         //Liczba wymiarów
         const size_t dims = 2;
