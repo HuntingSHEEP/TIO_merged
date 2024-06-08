@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "Utils.hpp"
+#include "functions.h"
 
 // Class representing an ant
 template<size_t Dims>
@@ -206,7 +207,7 @@ public:
 
 	inline bool finished() const
 	{
-		return m_nestRelocationCounter >= GlobalParams::MAX_NEST_RELOCATIONS;
+		return m_finished;
 	}
 
 	inline std::vector<Point<Dims>> getAntsPositions()
@@ -221,7 +222,7 @@ public:
 		return positions;
 	}
 
-	void update()
+	void update(const FunctionInfo& _functionInfo)
 	{
 		for (auto& ant : m_ants)
 		{
@@ -249,6 +250,65 @@ public:
 
 			m_antsExplorationCounter = 0;
 		}
+
+		if(Dims == 2)
+		{
+			auto [point, value] = getBest();
+			glm::vec2 vecPoint(point.pos[0], point.pos[1]);
+			int optimumIdx = 0;
+			float optimumDist = glm::length(_functionInfo.LUT2D[0].first - vecPoint);
+			for(int i = 1; i < _functionInfo.LUT2D.size(); i++)
+			{
+				const auto [lutPoint, lutValue] = _functionInfo.LUT2D[i];
+				float dist = glm::length(lutPoint - vecPoint);
+
+				if(dist < optimumDist)
+				{
+					optimumDist = dist;
+					optimumIdx = i;
+				}
+			}
+		
+			if(optimumDist <= 0.1 || m_nestRelocationCounter >= GlobalParams::MAX_NEST_RELOCATIONS)
+			{
+				displayInfo(value, optimumDist, optimumIdx, _functionInfo, point);
+				m_finished = true;
+			}
+		}
+		else
+		{
+			auto [point, value] = getBest();
+			int optimumIdx = 0;
+			float optimumDist = 1.0f;
+			if(_functionInfo.LUT10D.size() > 0)
+			{
+				Point<Dims> lutPoint;
+				std::copy(_functionInfo.LUT10D[0].first.data(), _functionInfo.LUT10D[0].first.data() + Dims, lutPoint.pos);
+				
+				optimumDist = static_cast<float>(Point<Dims>::dist<Dims>(lutPoint, point));
+
+				for(int i = 1; i < _functionInfo.LUT10D.size(); i++)
+				{
+					const auto [nextLUTPoint, nextLUTValue] = _functionInfo.LUT10D[i];
+					Point<Dims> nextPoint;
+					std::copy(_functionInfo.LUT10D[i].first.data(), _functionInfo.LUT10D[i].first.data() + Dims, nextPoint.pos);
+					
+					float dist = static_cast<float>(Point<Dims>::dist<Dims>(nextPoint, point));
+
+					if(dist < optimumDist)
+					{
+						optimumDist = dist;
+						optimumIdx = i;
+					}
+				}
+			}
+		
+			if(optimumDist <= 0.1 || m_nestRelocationCounter >= GlobalParams::MAX_NEST_RELOCATIONS)
+			{
+				displayInfo(value, optimumDist, optimumIdx, _functionInfo, point);
+				m_finished = true;
+			}
+		}
 	}
 
 	std::pair<Point<Dims>, double> getBest()
@@ -271,6 +331,32 @@ public:
 
 	// Private methods
 private:
+	void displayInfo(double value, float optimumDist, int optimumIdx, FunctionInfo _functionInfo, Point<Dims> point)
+	{
+			if(m_nestRelocationCounter >= GlobalParams::MAX_NEST_RELOCATIONS)
+			{
+				std::cout << "Stop criterion reached!\n";
+			}
+
+			std::cout << "Relocations: " << m_nestRelocationCounter << ".\nExplorations: " << m_antsExplorationCounter << ".\n";
+			std::cout << "Best value found in point (";
+			for(int i = 0; i < Dims; i++)
+			{
+				std::cout << point.pos[i] << ( i != Dims - 1 ? ", " : "");
+			}
+			std::cout << ") with value: " << value << ".\n";
+		
+			if(Dims == 2 && _functionInfo.LUT2D.size() > 0 || Dims == 10 && _functionInfo.LUT10D.size() > 0)
+			{
+				std::cout << "Distance from the closest global minimum: " << optimumDist << ".\n";
+				std::cout << "Differernce between minimum and found value: " << std::abs((Dims == 2 ? _functionInfo.LUT2D[optimumIdx].second : _functionInfo.LUT10D[optimumIdx].second) - value) << ".\n";
+			}
+			else if(Dims == 10 && _functionInfo.LUT10D.size() == 0)
+			{
+				std::cout << "Unknown global minimum - cannot compare.\n";
+			}
+	}
+
 	void performRecruitment()
 	{
 		if (m_ants.size() == 1)
@@ -374,4 +460,5 @@ private:
 	std::function<double(double*, size_t)> m_fun = {};
 	int m_nestRelocationCounter = 0;
 	int m_antsExplorationCounter = 0;
+	bool m_finished = false;
 };

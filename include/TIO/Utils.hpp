@@ -13,12 +13,12 @@ struct Point;
 namespace GlobalParams
 {
 	constexpr size_t ANT_MEMORY_SIZE = 2;
-	constexpr double NEIGHBOURHOOD_RATIO = 0.8;
+	constexpr double NEIGHBOURHOOD_RATIO = 1;
 	constexpr int MAX_FAILED_EXPLORATIONS_PER_SITE = 6;
 	constexpr int MAX_NUMBER_OF_RECRUITMENTS = 6;
 	constexpr int MAX_NEST_RELOCATIONS = 10;
 	constexpr int MAX_ANTS_EXPLORATIONS_PER_NEST = 10;
-	constexpr bool MINIMIZE = false;
+	constexpr bool MINIMIZE = true;
 }
 
 inline bool isBetter(double _first, double _second)
@@ -98,6 +98,18 @@ struct Point
 		}
 
 		return *this;
+	}
+
+	template<size_t Dims>
+	static inline double dist(const Point<Dims>& _first, const Point<Dims>& _second)
+	{
+		double sum = 0;
+		for(int i = 0; i < Dims; i++)
+		{
+			sum += (_second.pos[i] - _first.pos[i]) * (_second.pos[i] - _first.pos[i]);
+		}
+
+		return std::sqrt(sum);
 	}
 };
 
