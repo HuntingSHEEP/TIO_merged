@@ -13,7 +13,6 @@ struct Point;
 namespace GlobalParams
 {
 	constexpr size_t ANT_MEMORY_SIZE = 2;
-	constexpr double NEIGHBOURHOOD_RATIO = 1;
 	constexpr int MAX_FAILED_EXPLORATIONS_PER_SITE = 6;
 	constexpr int MAX_NUMBER_OF_RECRUITMENTS = 6;
 	constexpr int MAX_NEST_RELOCATIONS = 10;
@@ -68,7 +67,7 @@ struct FunDomain
 			sum += (to[i] - from[i]) * (to[i] - from[i]);
 		}
 
-		return std::sqrt(sum) / Dims * GlobalParams::NEIGHBOURHOOD_RATIO;
+		return std::sqrt(sum) / Dims;
 	}
 };
 
